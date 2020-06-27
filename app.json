@@ -1,0 +1,17 @@
+{
+  "name": "reactNativeFirestoreCouponCollection",
+  "displayName": "reactNativeFirestoreCouponCollection",
+  "expo": {
+    "name": "reactNativeFirestoreCouponCollection",
+    "slug": "reactNativeFirestoreCouponCollection",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
