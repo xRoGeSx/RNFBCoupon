@@ -11,6 +11,13 @@ import {IUser} from './Types/IUser'
 import {useAuth} from './Hooks/useAuth'
 import WelcomeScreen from './Views/WelcomeScreen'
 import CouponList from './Views/CouponList';
+import { useGeoPos } from './Hooks/useGeoPos';
+import { GeoPositionContext } from './context/GeoPositionContext';
+import { CollectionContext } from './context/CollectionContext';
+
+import { useStorage } from './Hooks/useStorage';
+import { useUserData } from './Hooks/useUserData';
+import { step, initial_search_radius } from './constants/constants';
 
 GoogleSignin.configure({
   webClientId: '881842366351-qjhprb56e8re8fen7o0j7trenvi7s9ff.apps.googleusercontent.com'
@@ -53,13 +60,33 @@ const RedeemCode : React.FC = () => {
   )
 }
 
+
 const MainView : React.FC = () => {
 
-const {initializing, user} = useAuth();
+const [radius, setRadius] = useState(1000);
+const increaseRadius = () => {
+  setRadius(radius*1.5) 
+  return radius;
+}
 
-if(initializing) return <View/>;
+const {initializing, user} = useAuth();
+const {initializing_g,geo_position, granted} = useGeoPos();
+const {initializing_s, couponCollection, loadMore} = useStorage(granted);
+const {initializing_ud, userData} = useUserData(user?.uid)
+
+
+if(initializing && initializing_g && initializing_s && initializing_ud) return <View/>;
 if(!user)        return <WelcomeScreen/> 
-                 return <CouponList/>
+                 return <CollectionContext.Provider value={{
+                   collectionData        : couponCollection,
+                   userData              : userData,
+                   loadMore              : loadMore,
+                   increaseRadius        : increaseRadius
+                 }}>
+                         <GeoPositionContext.Provider value={{latitude: geo_position.latitude, longitude: geo_position.longitude}}>
+                          <CouponList/>
+                         </GeoPositionContext.Provider>
+                        </CollectionContext.Provider>
 }
 
 const styles = StyleSheet.create({
